@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@types/react-native": "~0.70.6",
     "axios": "^1.2.2",
     "cryptojs": "^2.5.3",
     "expo": "~47.0.12",
@@ -16,8 +17,10 @@
     "html-to-text": "^9.0.3",
     "puppeteer": "^19.5.2",
     "react": "18.1.0",
-    "react-native": "^0.70.5",
-    "react-native-cli": "^2.0.1"
+    "react-native": "0.70.5",
+    "react-native-cli": "^2.0.1",
+    "react-native-dropdown-select-list": "^2.0.4",
+    "react-native-fs": "^2.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
