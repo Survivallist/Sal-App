@@ -1,49 +1,52 @@
 import React, { useState } from 'react';
-import {StyleSheet, Text, View, TextInput, TouchableOpacity, TextInputComponent} from 'react-native';
+import {StyleSheet, Text, View, TextInput, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {SelectList} from "react-native-dropdown-select-list";
-
-import axios from "axios";
+import {isKnown, isUser} from "./Account";
 import AndroidSafeView from "./AndroidSafeView";
+import {setLoginData} from "./Files";
 
-export default function Login(){
+export default function Login({navigation}){
 
-    async function isUser(enummer, password, school)
-    {
-        let result;
-
-        console.log(enummer + " " + password + " " + school);
-
-        await axios.post("https://salmobile-production.up.railway.app/isUser",{
-            e: enummer,
-            password: password,
-            school: school
-        }).then(response => {
-            result = response.data
-            console.log(response.data);
-        })
-            .catch(error => console.log(error))
-        return result;
-    }
     const onPressLogin = async () => {
-        if(! await isUser(state.enummer, state.password, state.school))
+        setLoading(true)
+        if(school === "")
         {
-            setState({error: "Cant find account"});
+            setError("Wähle deine Schule aus")
+        }
+        else if(enummer === "")
+        {
+            setError("Gebe deine E-Nummer ein")
+        }
+        else if(password === "")
+        {
+            setError("Gebe deine Passwort ein")
+        }
+        else if(! await isKnown(enummer, password, school))
+        {
+            setError("Deine Login-Daten sind falsch");
         }
         else
         {
-            setState({error: "juhu"});
+            await setLoginData(enummer, password, school).catch(error => console.log(error))
+            navigation.navigate("Home")
         }
+        setLoading(false)
     };
-    const [state, setState] = useState({
-        enummer: "",
-        password: "",
-        error: "",
-        school: "sekow"
-    });
+
+    const [enummer, setEnummer] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [school, setSchool] = useState("")
+    const [loading, setLoading] = useState(false)
+
+    const getLoading = () => {
+        return loading ? <ActivityIndicator color={"white"} size={"large"}></ActivityIndicator> : <Text style={styles.loginText}>Login</Text>;
+    }
+
     return (
         <View style={[AndroidSafeView.AndroidSafeArea, styles.container]}>
             <Text style={styles.title}>Login</Text>
-            <Text style={styles.error}>{state.error}</Text>
+            <Text style={styles.error}>{error}</Text>
             <View style={{paddingBottom: 20, justifyContent: "center", alignItems: "center", width: "80%"}}>
                 <SelectList
                     data={
@@ -65,12 +68,11 @@ export default function Login(){
                             {key: "sekwt", value: "Sekundarschule Waldenburgertal"},
                         ]
                     }
-                    setSelected={selected => setState({enummer: state.enummer, password: state.password, error: state.error, school: selected})}
-                    boxStyles={{borderRadius: 25, width: "100%",  borderColor: "black", justifyContent: "space-evenly",
-                        height: 50, alignItems: "center"}}
+                    setSelected={selected => setSchool(selected)}
+                    boxStyles={styles.dropdownBoxStyle}
                     placeholder={"Wähle deine Schule aus"}
                     search={false}
-                    dropdownStyles={{borderRadius: 25, borderColor: "black"}}
+                    dropdownStyles={styles.dropdownStyles}
                     dropdownTextStyles={{fontSize: 13}}
                     inputStyles={{fontSize: 13}}
 
@@ -80,26 +82,26 @@ export default function Login(){
                 <TextInput
                     style={styles.inputText}
                     //secureTextEntry
-                    placeholder="SAL-Passwort"
+                    placeholder="E-Nummer"
                     placeholderTextColor="#003f5c"
                     onChangeText={text => {
-                        setState({enummer: text, password: state.password, error: state.error, school: state.school});
+                        setEnummer(text);
                     }}/>
             </View>
             <View style={styles.inputView}>
                 <TextInput
                     style={styles.inputText}
-                    //secureTextEntry
+                    secureTextEntry
                     placeholder="SAL-Passwort"
                     placeholderTextColor="#003f5c"
                     onChangeText={text => {
-                        setState({enummer: state.enummer, password: text, error: state.error, school: state.school});
+                        setPassword(text);
                     }}/>
             </View>
             <TouchableOpacity
                 onPress = {onPressLogin}
                 style={styles.loginBtn}>
-                <Text style={styles.loginText}>LOGIN</Text>
+                {getLoading()}
             </TouchableOpacity>
         </View>
     );
@@ -112,9 +114,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     title:{
-        fontWeight: "bold",
+        fontWeight: "600",
         fontSize:30,
-        color:"#545454",
+        color:"black",
         marginBottom: 10,
     },
     error:{
@@ -135,15 +137,27 @@ const styles = StyleSheet.create({
         height:50,
     },
     loginText:{
-        color:"545454",
-
+        color:"white",
+        fontSize: 15
     },
     loginBtn:{
         width:"80%",
-        backgroundColor:"#3897f5",
+        backgroundColor:"#429cf5",
         borderRadius:25,
         height:50,
         alignItems:"center",
         justifyContent:"center",
     },
+    dropdownBoxStyle: {
+        borderRadius: 25,
+        width: "100%",
+        borderColor: "black",
+        justifyContent: "space-evenly",
+        height: 50,
+        alignItems: "center"
+    },
+    dropdownStyles:{
+        borderRadius: 25,
+        borderColor: "black"
+    }
 });

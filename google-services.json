@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1467367512",
+    "project_id": "salmobile-aae38",
+    "storage_bucket": "salmobile-aae38.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1467367512:android:38d47c96c742f79db58a2d",
+        "android_client_info": {
+          "package_name": "com.flavianthepavian.SalMobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1467367512-tmpps12tdd3anrr2phjqmhsgii78komd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN_TJy1WVUrD-ye3LRYMVqx0enJDolnQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1467367512-tmpps12tdd3anrr2phjqmhsgii78komd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
