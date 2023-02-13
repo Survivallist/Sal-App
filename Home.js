@@ -18,7 +18,6 @@ import {useFocusEffect} from "@react-navigation/native";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 
-
 export default function Home({navigation}){
 
     const[notificationToken, setNotificationToken] = useState("");
