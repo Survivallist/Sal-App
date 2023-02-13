@@ -3,7 +3,7 @@ import {
     ActivityIndicator,
     Button,
     Modal,
-    Platform,
+    Platform, RefreshControl,
     ScrollView,
     StyleSheet,
     Text,
@@ -11,10 +11,9 @@ import {
     View
 } from 'react-native';
 import {deleteLoginData, getLoginData} from "./Files";
-import {addNotificationToken, getMarks, isUser} from "./Account";
+import {addNotificationToken, getMarks, isUser, removeNotificationToken} from "./Account";
 import {Row, Rows, Table} from 'react-native-table-component';
 
-import AndroidSafeView from "./AndroidSafeView";
 import {useFocusEffect} from "@react-navigation/native";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -60,9 +59,7 @@ export default function Home({navigation}){
                         setLoading(false)
                         setKnown(false)
                     }
-                    alert("Test")
                     await registerForPushNotificationsAsync().then(token => {
-                        alert(token)
                         setNotificationToken(token);
                         addNotificationToken(data.enummer, token);
                     });
@@ -105,9 +102,10 @@ export default function Home({navigation}){
         return clean
     }
 
-    const logOut = () => {
-        deleteLoginData().catch(error => console.log(error))
-        navigation.navigate("Login")
+    const logOut = async () => {
+        await removeNotificationToken(getLoginData().e, notificationToken).catch(error => console.log(error))
+        await deleteLoginData().catch(error => console.log(error))
+        await navigation.navigate("Login")
     }
 
     const showDetails = (notenDetails, fach) => {
@@ -124,6 +122,8 @@ export default function Home({navigation}){
         setDetails({title: fach, noten: info})
     }
 
+    const[refreshing, setRefreshing] = useState(false)
+
     const getLoading = () => {
         if(loading)
         {
@@ -133,7 +133,49 @@ export default function Home({navigation}){
         {
             return <View style={{flex: 1, width: "100%", alignItems: "center", justifyContent: "center"}} pointerEvents={"box-none"}>
                 <Row data={table.head} flexArr={[3, 1, 1]} style={styles.head}/>
-                <ScrollView style={styles.tableContainer}>
+                <ScrollView style={styles.tableContainer} refreshControl={
+                    <RefreshControl
+                        colors={["#429cf5"]}
+                        refreshing={refreshing}
+                        onRefresh={
+                            async () => {
+                                setRefreshing(true)
+                                const data = await getLoginData();
+                                if(data.password === null)
+                                {
+                                    setKnown(true)
+                                    await navigation.navigate("Login")
+                                }
+                                else
+                                {
+                                    if(isKnown)
+                                    {
+                                        if(!(await isUser(data.enummer, data.password, data.school)))
+                                        {
+                                            setKnown(true)
+                                            await navigation.navigate("Login")
+                                        }
+                                        else
+                                        {
+                                            setTable(await getTable());
+                                            setKnown(false)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        setTable(await getTable());
+                                        setKnown(false)
+                                    }
+                                    await registerForPushNotificationsAsync().then(token => {
+                                        setNotificationToken(token);
+                                        addNotificationToken(data.enummer, token);
+                                    });
+                                }
+                                setRefreshing(false)
+                            }
+                        }
+                    />
+                }>
                     <Table borderStyle={{borderBottomWidth: 1}} style={{height: table.data.length * 45}}>
                         <Rows data={table.data} flexArr={[3, 1, 1]} style={styles.data} />
                     </Table>
@@ -170,7 +212,7 @@ export default function Home({navigation}){
     }
 
     return (
-        <View style={[AndroidSafeView.AndroidSafeArea, styles.container]}>
+        <View style={styles.container}>
             <Text style={styles.title}>Noten</Text>
             <Modal transparent visible={detailsVisible}>
                 <View style={styles.popupBackground}>
@@ -206,7 +248,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         fontSize: 30,
         color: "black",
-        marginBottom: 10,
+        margin: 10
     },
     subTitle: {
         fontWeight: "500",
@@ -277,6 +319,5 @@ async function registerForPushNotificationsAsync(){
             importance: Notifications.AndroidImportance.MAX
         })
     }
-    alert((await Notifications.getExpoPushTokenAsync()).data)
     return (await Notifications.getExpoPushTokenAsync()).data;
 }

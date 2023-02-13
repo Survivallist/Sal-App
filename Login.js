@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import {StyleSheet, Text, View, TextInput, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {SelectList} from "react-native-dropdown-select-list";
-import {isKnown, isUser} from "./Account";
-import AndroidSafeView from "./AndroidSafeView";
+import {isKnown} from "./Account";
 import {setLoginData} from "./Files";
 
 export default function Login({navigation}){
@@ -44,7 +43,7 @@ export default function Login({navigation}){
     }
 
     return (
-        <View style={[AndroidSafeView.AndroidSafeArea, styles.container]}>
+        <View style={styles.container}>
             <Text style={styles.title}>Login</Text>
             <Text style={styles.error}>{error}</Text>
             <View style={{paddingBottom: 20, justifyContent: "center", alignItems: "center", width: "80%"}}>
