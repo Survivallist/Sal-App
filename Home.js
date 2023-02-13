@@ -102,9 +102,10 @@ export default function Home({navigation}){
     }
 
     const logOut = async () => {
-        await removeNotificationToken(getLoginData().e, notificationToken).catch(error => console.log(error))
-        await deleteLoginData().catch(error => console.log(error))
-        await navigation.navigate("Login")
+        const e = (await getLoginData()).enummer;
+        await removeNotificationToken(e, notificationToken).catch(error => console.log(error))
+        deleteLoginData().catch(error => console.log(error))
+        navigation.navigate("Login")
     }
 
     const showDetails = (notenDetails, fach) => {

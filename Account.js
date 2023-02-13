@@ -45,6 +45,7 @@ export async function addNotificationToken(enummer, token)
 
 export async function removeNotificationToken(enummer, token)
 {
+    console.log(enummer)
     let result;
     await axios.post("https://salmobile-production.up.railway.app/removeToken",{
         e: Base64.encode(enummer),
