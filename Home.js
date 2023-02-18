@@ -1,27 +1,28 @@
 import React, {useState} from 'react';
 import {
     ActivityIndicator,
-    Button,
     Modal,
-    Platform, RefreshControl,
+    RefreshControl,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
     View
 } from 'react-native';
-import {deleteLoginData, getLoginData} from "./Files";
-import {addNotificationToken, getMarks, isUser, removeNotificationToken} from "./Account";
+import {getLoginData} from "./Files";
+import {
+    addNotificationToken,
+    getMarks,
+    isUser,
+    registerForPushNotificationsAsync,
+} from "./Server";
 import {Row, Rows, Table} from 'react-native-table-component';
 
 import {useFocusEffect} from "@react-navigation/native";
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 import {StatusBar} from "expo-status-bar";
+import Navbar from "./Navbar";
 
 export default function Home({navigation}){
-
-    const[notificationToken, setNotificationToken] = useState("");
 
     const[loading, setLoading] = useState(true)
 
@@ -48,6 +49,9 @@ export default function Home({navigation}){
                         }
                         else
                         {
+                            await registerForPushNotificationsAsync().then(token => {
+                                addNotificationToken(data.enummer, token);
+                            });
                             setTable(await getTable());
                             setLoading(false)
                             setKnown(false)
@@ -55,14 +59,13 @@ export default function Home({navigation}){
                     }
                     else
                     {
+                        await registerForPushNotificationsAsync().then(token => {
+                            addNotificationToken(data.enummer, token);
+                        });
                         setTable(await getTable());
                         setLoading(false)
                         setKnown(false)
                     }
-                    await registerForPushNotificationsAsync().then(token => {
-                        setNotificationToken(token);
-                        addNotificationToken(data.enummer, token);
-                    });
                 }
             }
             getInfo().catch(error => console.log(error))
@@ -100,13 +103,6 @@ export default function Home({navigation}){
             clean.data.push([key, getSchnitt(marks[key].schnitt, !marks[key].bestatigt), getDetailsButton(marks[key].noten, key, marks[key].schnitt.includes("*"))])
         }
         return clean
-    }
-
-    const logOut = async () => {
-        const e = (await getLoginData()).enummer;
-        await removeNotificationToken(e, notificationToken).catch(error => console.log(error))
-        deleteLoginData().catch(error => console.log(error))
-        navigation.navigate("Login")
     }
 
     const showDetails = (notenDetails, fach) => {
@@ -159,19 +155,23 @@ export default function Home({navigation}){
                                         }
                                         else
                                         {
+                                            await registerForPushNotificationsAsync().then(token => {
+                                                setNotificationToken(token);
+                                                addNotificationToken(data.enummer, token);
+                                            });
                                             setTable(await getTable());
                                             setKnown(false)
                                         }
                                     }
                                     else
                                     {
+                                        await registerForPushNotificationsAsync().then(token => {
+                                            setNotificationToken(token);
+                                            addNotificationToken(data.enummer, token);
+                                        });
                                         setTable(await getTable());
                                         setKnown(false)
                                     }
-                                    await registerForPushNotificationsAsync().then(token => {
-                                        setNotificationToken(token);
-                                        addNotificationToken(data.enummer, token);
-                                    });
                                 }
                                 setRefreshing(false)
                             }
@@ -246,9 +246,7 @@ export default function Home({navigation}){
             <View  style={{flex: 7, justifyContent: "center", alignItems: "center", width: "100%"}}>
                 {getLoading()}
             </View>
-            <View style={{flex: 1}}>
-                <Button onPress={logOut} title={"Log Out"}></Button>
-            </View>
+            <Navbar navigation={navigation}></Navbar>
             <StatusBar style={"light"} translucent={true} hidden={false}/>
         </View>
     );
@@ -258,7 +256,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         fontSize: 30,
         color: "black",
-        margin: 10,
+        margin: 5,
         marginTop: 20
     },
     subTitle: {
@@ -273,7 +271,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
-        backgroundColor: "#ffffff"
+        backgroundColor: "white",
+        paddingBottom: 0
     },
     head: {
         height: 20,
@@ -311,26 +310,38 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flex: 1,
         backgroundColor: "rgba(0, 0, 0, 0.5)"
+    },
+    navbarContainer: {
+        height: "100%",
+        width: "100%",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 12,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 16.00,
+        elevation: 24,
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        flexDirection: "row",
+        backgroundColor: "white",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderWidth: 1,
+        borderColor: "#696969"
+    },
+    navbarIcon: {
+        height: 40,
+        width: 40,
+        color: "orange"
+    },
+    navbarButtons: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    navbarText: {
+        color: "#429cf5",
     }
 });
 
-async function registerForPushNotificationsAsync(){
-    if(!Device.isDevice)
-    {
-        alert("Must use physical device for Push Notifications")
-        return;
-    }
-    const {status} = await Notifications.requestPermissionsAsync();
-    if(status !== "granted"){
-        alert("Please allow push notifications")
-        return;
-    }
-    if(Platform.OS === "android")
-    {
-        await Notifications.setNotificationChannelAsync("default", {
-            name: "default",
-            importance: Notifications.AndroidImportance.MAX
-        })
-    }
-    return (await Notifications.getExpoPushTokenAsync()).data;
-}

@@ -1,72 +1,79 @@
-import axios from "axios";
-import {getLoginData} from "./Files";
-import {Base64} from "js-base64";
+import React, {useEffect, useState} from 'react';
+import {
+    StyleSheet,
+    View,
+    Image,
+    Text, TouchableOpacity
+} from 'react-native';
+import {StatusBar} from "expo-status-bar";
+import Navbar from "./Navbar";
+import {deleteLoginData, getLoginData} from "./Files";
+import {registerForPushNotificationsAsync, removeNotificationToken} from "./Server";
 
-export async function isUser(enummer, password, school)
-{
-    let result;
-    await axios.post("https://salmobile-production.up.railway.app/isUser",{
-        e: Base64.encode(enummer),
-        password: Base64.encode(password),
-        school: school
-    }).then(response => {
-        result = response.data
-    })
-        .catch(error => console.log(error))
-    return result;
-}
+export default function Home({navigation}){
 
-export async function isKnown(enummer, password, school)
-{
-    let result;
-    await axios.post("https://salmobile-production.up.railway.app/isKnown",{
-        e: Base64.encode(enummer),
-        password: Base64.encode(password),
-        school: school
-    }).then(response => {
-        result = response.data
-    })
-        .catch(error => console.log(error))
-    return result;
-}
+    const[notificationToken, setNotificationToken] = useState("")
 
-export async function addNotificationToken(enummer, token)
-{
-    let result;
-    await axios.post("https://salmobile-production.up.railway.app/addToken",{
-        e: Base64.encode(enummer),
-        password: Base64.encode("flazu66.100%"),
-        token: Base64.encode(token)
-    }).then(response => {
-        result = response.data
-    }).catch(error => console.log(error))
-    return result;
-}
+    const[enummer, setEnummer] = useState("none")
 
-export async function removeNotificationToken(enummer, token)
-{
-    let result;
-    await axios.post("https://salmobile-production.up.railway.app/removeToken",{
-        e: Base64.encode(enummer),
-        password: Base64.encode("flazu66.100%"),
-        token: Base64.encode(token)
-    }).then(response => {
-        result = response.data
-    }).catch(error => console.log(error))
-    return result;
-}
+    useEffect(() => {
+        const load = async () => {
+            setEnummer((await getLoginData()).enummer)
+            await registerForPushNotificationsAsync().then(token => {
+                setNotificationToken(token);
+            });
+        }
+        load().catch(() => console.log(error))
+    }, []);
 
-export async function getMarks()
-{
-    let result;
-    const loginData = await getLoginData();
-    await axios.post("https://salmobile-production.up.railway.app/getMarks",{
-        e: Base64.encode(loginData.enummer),
-        password: Base64.encode(loginData.password),
-        school: loginData.school
-    }).then(response => {
-        result = response.data
-    })
-        .catch(error => console.log(error))
-    return result;
+    const logOut = async () => {
+        const e = (await getLoginData()).enummer;
+        await removeNotificationToken(e, notificationToken).catch(error => console.log(error))
+        deleteLoginData().catch(error => console.log(error))
+        navigation.navigate("Login")
+    }
+
+    return (
+        <View style={{backgroundColor: "white", flex: 1, padding: 15, paddingBottom: 0}}>
+            <View style={styles.container}>
+                <Image source={require("./assets/profile.png")} style={styles.accountIcon}></Image>
+                <Text style={styles.nummerText}>{enummer}</Text>
+                <TouchableOpacity style={styles.logoutButton} onPress={logOut}>
+                    <Text style={styles.logoutText}>Log Out</Text>
+                </TouchableOpacity>
+                <StatusBar style={"light"} translucent={true} hidden={false}/>
+            </View>
+            <Navbar navigation={navigation}></Navbar>
+        </View>
+
+    );
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    accountIcon: {
+        height: "20%",
+        resizeMode: "contain",
+    },
+    logoutButton: {
+        flex: 1,
+        backgroundColor: "#429cf5",
+        width: "80%",
+        maxHeight: "10%",
+        borderRadius: 25,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    logoutText: {
+        color: "white",
+        fontSize: 30
+    },
+    nummerText: {
+        fontSize: 30,
+        padding: 15
+    }
+});

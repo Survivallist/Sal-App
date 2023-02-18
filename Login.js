@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {StyleSheet, Text, View, TextInput, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {SelectList} from "react-native-dropdown-select-list";
-import {isKnown} from "./Account";
+import {isKnown} from "./Server";
 import {setLoginData} from "./Files";
 
 export default function Login({navigation}){
@@ -97,7 +97,7 @@ export default function Login({navigation}){
                     }}/>
             </View>
             <TouchableOpacity
-                onPress = {onPressLogin}
+                onPress={onPressLogin}
                 style={styles.loginBtn}>
                 {getLoading()}
             </TouchableOpacity>
