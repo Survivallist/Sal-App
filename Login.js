@@ -41,7 +41,6 @@ export default function Login({navigation}){
     const getLoading = () => {
         return loading ? <ActivityIndicator color={"white"} size={"large"}></ActivityIndicator> : <Text style={styles.loginText}>Login</Text>;
     }
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Login</Text>

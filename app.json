@@ -43,6 +43,12 @@
           "sounds": ["./assets/notification.mp3"]
         }
       ]
-    ]
+    ],
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff",
+      "barStyle": "light-content",
+      "translucent": true,
+      "hidden": false
+    }
   }
 }

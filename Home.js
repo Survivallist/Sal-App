@@ -17,6 +17,7 @@ import {Row, Rows, Table} from 'react-native-table-component';
 import {useFocusEffect} from "@react-navigation/native";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import {StatusBar} from "expo-status-bar";
 
 export default function Home({navigation}){
 
@@ -124,6 +125,7 @@ export default function Home({navigation}){
 
     const[refreshing, setRefreshing] = useState(false)
 
+
     const getLoading = () => {
         if(loading)
         {
@@ -176,8 +178,15 @@ export default function Home({navigation}){
                         }
                     />
                 }>
-                    <Table borderStyle={{borderBottomWidth: 1}} style={{height: table.data.length * 45}}>
-                        <Rows data={table.data} flexArr={[3, 1, 1]} style={styles.data} />
+                    <Table style={{height: "100%", justifyContent: "center"}}>
+                        <Rows data={table.data} flexArr={[3, 1, 1]} style={
+                            {
+                                height: (100 / table.data.length).toString() / 12 * 11 + "%",
+                                marginTop: (100 / table.data.length / 24).toString() + "%",
+                                marginBottom: (100 / table.data.length / 20).toString() + "%",
+                                marginLeft: 6,
+                                marginRight: 6
+                            }}/>
                     </Table>
                 </ScrollView>
             </View>;
@@ -234,12 +243,13 @@ export default function Home({navigation}){
                     </View>
                 </View>
             </Modal>
-            <View style={{flex: 7, justifyContent: "center", alignItems: "center", width: "100%"}}>
+            <View  style={{flex: 7, justifyContent: "center", alignItems: "center", width: "100%"}}>
                 {getLoading()}
             </View>
             <View style={{flex: 1}}>
                 <Button onPress={logOut} title={"Log Out"}></Button>
             </View>
+            <StatusBar style={"light"} translucent={true} hidden={false}/>
         </View>
     );
 }
@@ -248,7 +258,8 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         fontSize: 30,
         color: "black",
-        margin: 10
+        margin: 10,
+        marginTop: 20
     },
     subTitle: {
         fontWeight: "500",
@@ -261,7 +272,8 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 15
+        padding: 15,
+        backgroundColor: "#ffffff"
     },
     head: {
         height: 20,
@@ -287,7 +299,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         height: "80%",
-        flexDirection: "row"
+        flexDirection: "row",
+        maxHeight: 28
     },
     loginBtnText: {
         color: "white",
@@ -298,7 +311,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flex: 1,
         backgroundColor: "rgba(0, 0, 0, 0.5)"
-    },
+    }
 });
 
 async function registerForPushNotificationsAsync(){
