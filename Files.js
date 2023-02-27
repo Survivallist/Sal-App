@@ -38,5 +38,35 @@ export async function deleteLoginData()
     {
         console.log(error)
     }
+}
 
+export async function setSendNotifications(value)
+{
+    try
+    {
+        await SecureStore.setItemAsync("sendNotifications", value.toString());
+    }
+    catch (error)
+    {
+        console.log(error)
+    }
+}
+
+export async function getSendNotifications()
+{
+    let value = "true"
+    try
+    {
+        value = await SecureStore.getItemAsync("sendNotifications");
+    }
+    catch (error)
+    {
+        console.log(error)
+    }
+    if(value === undefined)
+    {
+        value = true
+        await setSendNotifications(true).catch(error => console.log(error))
+    }
+    return value;
 }

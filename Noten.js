@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import {getLoginData} from "./Files";
+import {getLoginData, getSendNotifications, setSendNotifications} from "./Files";
 import {
     addNotificationToken,
     getMarks,
@@ -22,7 +22,7 @@ import {useFocusEffect} from "@react-navigation/native";
 import {StatusBar} from "expo-status-bar";
 import Navbar from "./Navbar";
 
-export default function Home({navigation}){
+export default function Noten({navigation}){
 
     const[loading, setLoading] = useState(true)
 
@@ -31,11 +31,20 @@ export default function Home({navigation}){
     useFocusEffect(
         React.useCallback(() => {
             const getInfo = async () => {
-                setLoading(true)
-                const data = await getLoginData();
-                if(data.password === null)
+                if(await getSendNotifications() !== "true" && await getSendNotifications() !== "false")
                 {
-                    setKnown(true)
+                    await setSendNotifications(true)
+                }
+                if(isKnown)
+                {
+                    await setKnown(false)
+                    await setLoading(true)
+                }
+                const data = await getLoginData();
+                if(data.password === null || data.password === undefined)
+                {
+                    setLoading(true)
+                    await setKnown(true)
                     await navigation.navigate("Login")
                 }
                 else
@@ -49,8 +58,11 @@ export default function Home({navigation}){
                         }
                         else
                         {
-                            await registerForPushNotificationsAsync().then(token => {
-                                addNotificationToken(data.enummer, token);
+                            await registerForPushNotificationsAsync().then(async token => {
+                                if(await getSendNotifications())
+                                {
+                                    await addNotificationToken(data.enummer, token);
+                                }
                             });
                             setTable(await getTable());
                             setLoading(false)
@@ -59,8 +71,11 @@ export default function Home({navigation}){
                     }
                     else
                     {
-                        await registerForPushNotificationsAsync().then(token => {
-                            addNotificationToken(data.enummer, token);
+                        await registerForPushNotificationsAsync().then(async token => {
+                            if(await getSendNotifications())
+                            {
+                                await addNotificationToken(data.enummer, token);
+                            }
                         });
                         setTable(await getTable());
                         setLoading(false)
@@ -88,6 +103,29 @@ export default function Home({navigation}){
         }
     }
 
+    const getTableStyle = () => {
+        if(table.data !== undefined)
+        {
+            return {
+                height: (100 / table.data.length).toString() / 12 * 11 + "%",
+                marginTop: (100 / table.data.length / 24).toString() + "%",
+                marginBottom: (100 / table.data.length / 20).toString() + "%",
+                marginLeft: 6,
+                marginRight: 6
+            }
+        }
+        else
+        {
+            return {
+                height: "10%",
+                marginTop: "2.6%",
+                marginBottom: "2.6%",
+                marginLeft: 6,
+                marginRight: 6
+            }
+        }
+    }
+
     async function getTable(){
         let marks = await getMarks();
         if(marks === "failed")
@@ -97,7 +135,8 @@ export default function Home({navigation}){
         }
         let clean = {
             head: ["Fach", "Schnitt", "Details"],
-            data: []
+            data: [],
+            loggingIn: "false"
         };
         for (let key in marks){
             clean.data.push([key, getSchnitt(marks[key].schnitt, !marks[key].bestatigt), getDetailsButton(marks[key].noten, key, marks[key].schnitt.includes("*"))])
@@ -120,7 +159,6 @@ export default function Home({navigation}){
     }
 
     const[refreshing, setRefreshing] = useState(false)
-
 
     const getLoading = () => {
         if(loading)
@@ -155,9 +193,11 @@ export default function Home({navigation}){
                                         }
                                         else
                                         {
-                                            await registerForPushNotificationsAsync().then(token => {
-                                                setNotificationToken(token);
-                                                addNotificationToken(data.enummer, token);
+                                            await registerForPushNotificationsAsync().then(async token => {
+                                                if(await getSendNotifications())
+                                                {
+                                                    await addNotificationToken(data.enummer, token);
+                                                }
                                             });
                                             setTable(await getTable());
                                             setKnown(false)
@@ -165,9 +205,11 @@ export default function Home({navigation}){
                                     }
                                     else
                                     {
-                                        await registerForPushNotificationsAsync().then(token => {
-                                            setNotificationToken(token);
-                                            addNotificationToken(data.enummer, token);
+                                        await registerForPushNotificationsAsync().then(async token=> {
+                                            if(await getSendNotifications())
+                                            {
+                                                await addNotificationToken(data.enummer, token);
+                                            }
                                         });
                                         setTable(await getTable());
                                         setKnown(false)
@@ -179,14 +221,7 @@ export default function Home({navigation}){
                     />
                 }>
                     <Table style={{height: "100%", justifyContent: "center"}}>
-                        <Rows data={table.data} flexArr={[3, 1, 1]} style={
-                            {
-                                height: (100 / table.data.length).toString() / 12 * 11 + "%",
-                                marginTop: (100 / table.data.length / 24).toString() + "%",
-                                marginBottom: (100 / table.data.length / 20).toString() + "%",
-                                marginLeft: 6,
-                                marginRight: 6
-                            }}/>
+                        <Rows data={table.data} flexArr={[3, 1, 1]} style={getTableStyle()}/>
                     </Table>
                 </ScrollView>
             </View>;
@@ -224,7 +259,7 @@ export default function Home({navigation}){
         <View style={styles.container}>
             <Text style={styles.title}>Noten</Text>
             <Modal transparent visible={detailsVisible}>
-                <View style={styles.popupBackground}>
+                <View style={styles.popupBackground} >
                     <View style={{width: "95%", backgroundColor: "white", justifyContent: "center", alignItems: "center", borderRadius: 26}}>
                         <View style={{alignItems: "center", justifyContent: "center", width: "95%"}}>
                             <Text style={styles.subTitle}>{details.title}</Text>

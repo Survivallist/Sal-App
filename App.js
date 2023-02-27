@@ -1,7 +1,7 @@
 import Login from "./Login";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import Home from "./Home";
+import Noten from "./Noten";
 import Account from "./Account"
 
 const Stack = createNativeStackNavigator()
@@ -10,10 +10,10 @@ export default function App() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Navigator screenOptions={{headerShown: false, animation: "fade"}}>
                 <Stack.Screen
-                    name={"Home"}
-                    component={Home}
+                    name={"Noten"}
+                    component={Noten}
                 />
                 <Stack.Screen
                     name={"Login"}

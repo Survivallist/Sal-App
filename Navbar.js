@@ -4,12 +4,12 @@ import React from "react";
 export default function Navbar({navigation}){
     return <View style={{justifyContent: "flex-end", alignItems: "center", paddingTop: 10, height: "13%"}}>
         <View style={styles.navbarContainer}>
-            <TouchableOpacity style={styles.navbarButtons} onPress={() => {navigation.navigate("Home")}}>
+            <TouchableOpacity style={styles.navbarButtons} onPress={() => {navigation.navigate("Noten")}}>
                 <Image source={require("./assets/marks.png")} style={styles.navbarIcon}></Image>
                 <Text style={styles.navbarText}>Noten</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navbarButtons} onPress={() => {navigation.navigate("Account")}}>
-                <Image source={require("./assets/profile-blue.png")} style={styles.navbarIcon}></Image>
+                <Image source={require("./assets/profile.png")} style={styles.navbarIcon}></Image>
                 <Text style={styles.navbarText}>Account</Text>
             </TouchableOpacity>
         </View>
@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     navbarText: {
-        color: "#429cf5",
+        color: "black",
     }
 })

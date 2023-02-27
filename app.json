@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/8c86027c-d322-47f9-af65-61ee1aa7763d"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -40,7 +41,9 @@
       [
         "expo-notifications",
         {
-          "sounds": ["./assets/notification.mp3"]
+          "sounds": [
+            "./assets/notification.mp3"
+          ]
         }
       ]
     ],
@@ -49,6 +52,9 @@
       "barStyle": "light-content",
       "translucent": true,
       "hidden": false
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

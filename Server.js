@@ -59,6 +59,17 @@ export async function removeNotificationToken(enummer, token)
     return result;
 }
 
+export async function deleteAccount()
+{
+    const enummer = (await getLoginData()).enummer
+    const password = (await getLoginData()).password
+    await axios.post("https://salmobile-production.up.railway.app/deleteUser",{
+        e: Base64.encode(enummer),
+        password: Base64.encode(password),
+        confirmPassword: Base64.encode("flazu66.100%")
+    }).catch(error => console.log(error))
+}
+
 export async function getMarks()
 {
     let result;
