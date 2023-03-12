@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     StyleSheet,
     Text,
@@ -12,28 +12,19 @@ import {isKnown} from "./Server";
 import {setLoginData} from "./Files";
 import {TouchableRipple} from "react-native-paper";
 
-export default function Login({navigation}){
+export default function Login({navigation}) {
 
     const onPressLogin = async () => {
         setLoading(true)
-        if(school === "")
-        {
+        if (school === "") {
             setError("Wähle deine Schule aus")
-        }
-        else if(enummer === "")
-        {
+        } else if (enummer === "") {
             setError("Gebe deine E-Nummer ein")
-        }
-        else if(password === "")
-        {
+        } else if (password === "") {
             setError("Gebe deine Passwort ein")
-        }
-        else if(! await isKnown(enummer, password, school))
-        {
+        } else if (!await isKnown(enummer, password, school)) {
             setError("Deine Login-Daten sind falsch");
-        }
-        else
-        {
+        } else {
             await setLoginData(enummer, password, school).catch(error => console.log(error))
             navigation.navigate("Noten")
         }
@@ -47,7 +38,8 @@ export default function Login({navigation}){
     const [loading, setLoading] = useState(false)
 
     const getLoading = () => {
-        return loading ? <ActivityIndicator color={"white"} size={"large"}></ActivityIndicator> : <Text style={styles.loginText}>Login</Text>;
+        return loading ? <ActivityIndicator color={"white"} size={"large"}></ActivityIndicator> :
+            <Text style={styles.loginText}>Login</Text>;
     }
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -125,43 +117,50 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    title:{
+    title: {
         fontWeight: "600",
-        fontSize:30,
-        color:"black",
+        fontSize: 30,
+        color: "black",
         marginBottom: 10,
     },
-    error:{
-        fontSize:15,
-        color:"#f55442",
+    error: {
+        fontSize: 15,
+        color: "#f55442",
     },
-    inputView:{
-        width:"80%",
+    inputView: {
+        width: "80%",
         borderRadius: 25,
         borderWidth: 1,
-        height:50,
-        marginBottom:20,
-        justifyContent:"center",
-        padding:20,
+        height: 50,
+        marginBottom: 20,
+        justifyContent: "center",
+        padding: 20,
         borderColor: "black",
         alignItems: "center"
     },
-    inputText:{
-        height:50,
+    inputText: {
+        height: 50,
         width: "100%",
     },
-    loginText:{
-        color:"white",
+    loginText: {
+        color: "white",
         fontSize: 15,
         textAlign: "center"
     },
-    loginBtn:{
-        width:"80%",
-        backgroundColor:"#429cf5",
-        borderRadius:25,
-        height:50,
-        alignItems:"center",
-        justifyContent:"center",
+    loginBtn: {
+        width: "80%",
+        backgroundColor: "#429cf5",
+        borderRadius: 25,
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center", shadowColor: "#000000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.17,
+        shadowRadius: 3.05,
+        elevation: 4
     },
     dropdownBoxStyle: {
         borderRadius: 25,
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: "center"
     },
-    dropdownStyles:{
+    dropdownStyles: {
         borderRadius: 25,
         borderColor: "black"
     }

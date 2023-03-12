@@ -17,45 +17,35 @@ import {StatusBar} from "expo-status-bar";
 import Navbar from "./Navbar";
 import {TouchableRipple} from "react-native-paper";
 
-export default function Noten({navigation}){
+export default function Noten({navigation}) {
 
-    const[loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
-    const[isKnown, setKnown] = useState(false)
+    const [isKnown, setKnown] = useState(false)
 
     useFocusEffect(
         React.useCallback(() => {
             const getInfo = async () => {
-                if(await getSendNotifications() !== "true" && await getSendNotifications() !== "false")
-                {
+                if (await getSendNotifications() !== "true" && await getSendNotifications() !== "false") {
                     await setSendNotifications(true)
                 }
-                if(isKnown)
-                {
+                if (isKnown) {
                     await setKnown(false)
                     await setLoading(true)
                 }
                 const data = await getLoginData();
-                if(data.password === null || data.password === undefined)
-                {
+                if (data.password === null || data.password === undefined) {
                     setLoading(true)
                     await setKnown(true)
                     await navigation.navigate("Login")
-                }
-                else
-                {
-                    if(isKnown)
-                    {
-                        if(!(await isUser(data.enummer, data.password, data.school)))
-                        {
+                } else {
+                    if (isKnown) {
+                        if (!(await isUser(data.enummer, data.password, data.school))) {
                             setKnown(true)
                             await navigation.navigate("Login")
-                        }
-                        else
-                        {
+                        } else {
                             await registerForPushNotificationsAsync().then(async token => {
-                                if(await getSendNotifications())
-                                {
+                                if (await getSendNotifications()) {
                                     await addNotificationToken(data.enummer, token);
                                 }
                             });
@@ -63,12 +53,9 @@ export default function Noten({navigation}){
                             setLoading(false)
                             setKnown(false)
                         }
-                    }
-                    else
-                    {
+                    } else {
                         await registerForPushNotificationsAsync().then(async token => {
-                            if(await getSendNotifications())
-                            {
+                            if (await getSendNotifications()) {
                                 await addNotificationToken(data.enummer, token);
                             }
                         });
@@ -87,8 +74,7 @@ export default function Noten({navigation}){
     let [table, setTable] = useState({});
 
     const getTableStyle = () => {
-        if(table.data !== undefined)
-        {
+        if (table.data !== undefined) {
             return {
                 height: (100 / table.data.length).toString() / 12 * 11 + "%",
                 marginTop: (100 / table.data.length / 24).toString() + "%",
@@ -96,9 +82,7 @@ export default function Noten({navigation}){
                 marginLeft: 6,
                 marginRight: 6
             }
-        }
-        else
-        {
+        } else {
             return {
                 height: "10%",
                 marginTop: "2.6%",
@@ -109,13 +93,12 @@ export default function Noten({navigation}){
         }
     }
 
-    const[bestatigt, setBestatigt] = useState({})
+    const [bestatigt, setBestatigt] = useState({})
 
-    async function getTable(){
+    async function getTable() {
         let marks = await getMarks();
         setMarks(marks)
-        if(marks === "failed")
-        {
+        if (marks === "failed") {
             navigation.navigate("Login")
             return;
         }
@@ -124,15 +107,15 @@ export default function Noten({navigation}){
             data: [],
             loggingIn: "false"
         };
-        for (let key in marks){
+        for (let key in marks) {
             bestatigt[key] = marks[key].bestatigt
             clean.data.push([key, getSchnitt(marks[key].schnitt, !marks[key].bestatigt), getDetailsButton(marks[key], key, marks[key].schnitt.includes("*"))])
         }
         return clean
     }
-    async function redisplayTable(){
-        if(marks === "failed")
-        {
+
+    async function redisplayTable() {
+        if (marks === "failed") {
             navigation.navigate("Login")
             return;
         }
@@ -141,7 +124,7 @@ export default function Noten({navigation}){
             data: [],
             loggingIn: "false"
         };
-        for (let key in marks){
+        for (let key in marks) {
             bestatigt[key] = marks[key].bestatigt
             clean.data.push([key, getSchnitt(marks[key].schnitt, !marks[key].bestatigt), getDetailsButton(marks[key], key, marks[key].schnitt.includes("*"))])
         }
@@ -165,16 +148,15 @@ export default function Noten({navigation}){
         setDetails({title: fach, noten: info, sign: sign, schnitt: notenDetails.schnitt.replace("*", "")})
     }
 
-    const[refreshing, setRefreshing] = useState(false)
+    const [refreshing, setRefreshing] = useState(false)
 
     const getLoading = () => {
-        if(loading)
-        {
-            return <View style={{justifyContent: "center", alignItems: "center"}}><ActivityIndicator color={"#429cf5"} size={"large"}></ActivityIndicator></View>;
-        }
-        else
-        {
-            return <View style={{flex: 1, width: "100%", alignItems: "center", justifyContent: "center"}} pointerEvents={"box-none"}>
+        if (loading) {
+            return <View style={{justifyContent: "center", alignItems: "center"}}><ActivityIndicator color={"#429cf5"}
+                                                                                                     size={"large"}></ActivityIndicator></View>;
+        } else {
+            return <View style={{flex: 1, width: "100%", alignItems: "center", justifyContent: "center"}}
+                         pointerEvents={"box-none"}>
                 <Row data={table.head} flexArr={[3, 1, 1]} style={styles.head}/>
                 <ScrollView style={styles.tableContainer} refreshControl={
                     <RefreshControl
@@ -184,37 +166,26 @@ export default function Noten({navigation}){
                             async () => {
                                 setRefreshing(true)
                                 const data = await getLoginData();
-                                if(data.password === null)
-                                {
+                                if (data.password === null) {
                                     setKnown(true)
                                     await navigation.navigate("Login")
-                                }
-                                else
-                                {
-                                    if(isKnown)
-                                    {
-                                        if(!(await isUser(data.enummer, data.password, data.school)))
-                                        {
+                                } else {
+                                    if (isKnown) {
+                                        if (!(await isUser(data.enummer, data.password, data.school))) {
                                             setKnown(true)
                                             await navigation.navigate("Login")
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             await registerForPushNotificationsAsync().then(async token => {
-                                                if(await getSendNotifications())
-                                                {
+                                                if (await getSendNotifications()) {
                                                     await addNotificationToken(data.enummer, token);
                                                 }
                                             });
                                             setTable(await getTable());
                                             setKnown(false)
                                         }
-                                    }
-                                    else
-                                    {
-                                        await registerForPushNotificationsAsync().then(async token=> {
-                                            if(await getSendNotifications())
-                                            {
+                                    } else {
+                                        await registerForPushNotificationsAsync().then(async token => {
+                                            if (await getSendNotifications()) {
                                                 await addNotificationToken(data.enummer, token);
                                             }
                                         });
@@ -236,20 +207,19 @@ export default function Noten({navigation}){
     }
 
 
+    const [details, setDetails] = useState({title: "", noten: []})
 
-    const[details, setDetails] = useState({title: "", noten:[]})
-
-    const[detailsVisible, setDetailsVisible] = useState(false)
+    const [detailsVisible, setDetailsVisible] = useState(false)
 
     const getDetailsButton = (details, fach) => {
         return (
             <TouchableRipple
-            style={styles.loginBtn}
-            onPress={() => showDetails(details, fach)}
-            rippleColor={"rgba(255,255,255,0.5)"}
-        >
-            <Text style={styles.loginBtnText}>Details</Text>
-        </TouchableRipple>
+                style={styles.loginBtn}
+                onPress={() => showDetails(details, fach)}
+                rippleColor={"rgba(255,255,255,0.5)"}
+            >
+                <Text style={styles.loginBtnText}>Details</Text>
+            </TouchableRipple>
         )
     }
 
@@ -275,56 +245,93 @@ export default function Noten({navigation}){
     }
 
     const getDetailsOkButton = () => {
-        try{
-            return !marks[details.title].bestatigt && !bestatigt[details.title] ? <View style={{flexDirection: "row", width: "100%", justifyContent: "space-evenly"}}>
-                <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => fachBestatigen(details.title)}
-                                  style={{marginTop: 10, backgroundColor: "#1BE971", width: "35%", height: 40, borderRadius: 20,
-                                      justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: "#000000",
-                                      shadowOffset: {
-                                          width: 0,
-                                          height: 3,
-                                      },
-                                      shadowOpacity:  0.17,
-                                      shadowRadius: 3.05,
-                                      elevation: 4}}>
-                    <Text style={{color: "white"}}>Bestätigen</Text>
-                </TouchableRipple>
+        try {
+            return !marks[details.title].bestatigt && !bestatigt[details.title] ?
+                <View style={{flexDirection: "row", width: "100%", justifyContent: "space-evenly"}}>
+                    <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => fachBestatigen(details.title)}
+                                     style={{
+                                         marginTop: 10,
+                                         backgroundColor: "#1BE971",
+                                         width: "35%",
+                                         height: 40,
+                                         borderRadius: 20,
+                                         justifyContent: "center",
+                                         alignItems: "center",
+                                         marginBottom: 10,
+                                         shadowColor: "#000000",
+                                         shadowOffset: {
+                                             width: 0,
+                                             height: 3,
+                                         },
+                                         shadowOpacity: 0.17,
+                                         shadowRadius: 3.05,
+                                         elevation: 4
+                                     }}>
+                        <Text style={{color: "white"}}>Bestätigen</Text>
+                    </TouchableRipple>
+                    <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => setDetailsVisible(false)}
+                                     style={{
+                                         marginTop: 10,
+                                         backgroundColor: "#429cf5",
+                                         width: "60%",
+                                         height: 40,
+                                         borderRadius: 20,
+                                         justifyContent: "center",
+                                         alignItems: "center",
+                                         marginBottom: 10,
+                                         shadowColor: "#000000",
+                                         shadowOffset: {
+                                             width: 0,
+                                             height: 3,
+                                         },
+                                         shadowOpacity: 0.17,
+                                         shadowRadius: 3.05,
+                                         elevation: 4
+                                     }}>
+                        <Text style={{color: "white"}}>Ok</Text>
+                    </TouchableRipple>
+                </View> :
                 <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => setDetailsVisible(false)}
-                                  style={{marginTop: 10, backgroundColor: "#429cf5", width: "60%", height: 40, borderRadius: 20,
-                                      justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: "#000000",
-                                      shadowOffset: {
-                                          width: 0,
-                                          height: 3,
-                                      },
-                                      shadowOpacity:  0.17,
-                                      shadowRadius: 3.05,
-                                      elevation: 4}}>
+                                 style={{
+                                     marginTop: 10,
+                                     backgroundColor: "#429cf5",
+                                     width: "80%",
+                                     height: 40,
+                                     borderRadius: 20,
+                                     justifyContent: "center",
+                                     alignItems: "center",
+                                     marginBottom: 10,
+                                     shadowColor: "#000000",
+                                     shadowOffset: {
+                                         width: 0,
+                                         height: 3,
+                                     },
+                                     shadowOpacity: 0.17,
+                                     shadowRadius: 3.05,
+                                     elevation: 4
+                                 }}>
                     <Text style={{color: "white"}}>Ok</Text>
                 </TouchableRipple>
-            </View> : <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => setDetailsVisible(false)}
-                                        style={{marginTop: 10, backgroundColor: "#429cf5", width: "80%", height: 40, borderRadius: 20,
-                                            justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: "#000000",
-                                            shadowOffset: {
-                                                width: 0,
-                                                height: 3,
-                                            },
-                                            shadowOpacity:  0.17,
-                                            shadowRadius: 3.05,
-                                            elevation: 4}}>
-                <Text style={{color: "white"}}>Ok</Text>
-            </TouchableRipple>
-        }catch (e)
-        {
+        } catch (e) {
             return <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} onPress={() => setDetailsVisible(false)}
-                              style={{marginTop: 10, backgroundColor: "#429cf5", width: "80%", height: 40, borderRadius: 20,
-                                  justifyContent: "center", alignItems: "center", marginBottom: 10, shadowColor: "#000000",
-                                  shadowOffset: {
-                                      width: 0,
-                                      height: 3,
-                                  },
-                                  shadowOpacity:  0.17,
-                                  shadowRadius: 3.05,
-                                  elevation: 4}}>
+                                    style={{
+                                        marginTop: 10,
+                                        backgroundColor: "#429cf5",
+                                        width: "80%",
+                                        height: 40,
+                                        borderRadius: 20,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        marginBottom: 10,
+                                        shadowColor: "#000000",
+                                        shadowOffset: {
+                                            width: 0,
+                                            height: 3,
+                                        },
+                                        shadowOpacity: 0.17,
+                                        shadowRadius: 3.05,
+                                        elevation: 4
+                                    }}>
                 <Text style={{color: "white"}}>Ok</Text>
             </TouchableRipple>
         }
@@ -334,28 +341,36 @@ export default function Noten({navigation}){
         <View style={styles.container}>
             <Text style={styles.title}>Noten</Text>
             <Modal transparent visible={detailsVisible}>
-                <View style={styles.popupBackground} >
-                    <View style={{width: "95%", backgroundColor: "white", justifyContent: "center", alignItems: "center", borderRadius: 26}}>
+                <View style={styles.popupBackground}>
+                    <View style={{
+                        width: "95%",
+                        backgroundColor: "white",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderRadius: 26
+                    }}>
                         <View style={{alignItems: "center", justifyContent: "center", width: "95%"}}>
                             <View style={{width: "100%", flexDirection: "row", alignItems: "center"}}>
                                 <Text style={styles.subTitle}>{details.title}</Text>
                                 {details.sign}
                             </View>
 
-                            <Row data={["Datum", "Test", "Note", "Gewicht"]} flexArr={[3, 5, 2, 2]} style={styles.head}/>
+                            <Row data={["Datum", "Test", "Note", "Gewicht"]} flexArr={[3, 5, 2, 2]}
+                                 style={styles.head}/>
                             <View style={styles.tableContainer}>
                                 <Table style={{height: details.noten.length * 47}}>
                                     <Rows data={details.noten} flexArr={[3, 5, 2, 2]} style={{height: 35, margin: 6}}/>
                                 </Table>
                                 <View style={{backgroundColor: "black", height: 1, marginTop: 0, margin: 10}}></View>
-                                <Row data={["", " Schnitt", details.schnitt, ""]} flexArr={[3, 5, 2, 2]} style={{marginBottom: 10}}/>
+                                <Row data={["", " Schnitt", details.schnitt, ""]} flexArr={[3, 5, 2, 2]}
+                                     style={{marginBottom: 10}}/>
                             </View>
                             {getDetailsOkButton()}
                         </View>
                     </View>
                 </View>
             </Modal>
-            <View  style={{flex: 7, justifyContent: "center", alignItems: "center", width: "100%"}}>
+            <View style={{flex: 7, justifyContent: "center", alignItems: "center", width: "100%"}}>
                 {getLoading()}
             </View>
             <Navbar navigation={navigation} screen={"Noten"}></Navbar>
@@ -465,7 +480,7 @@ const styles = StyleSheet.create({
             width: 0,
             height: 3,
         },
-        shadowOpacity:  0.17,
+        shadowOpacity: 0.17,
         shadowRadius: 3.05,
         elevation: 4
     },

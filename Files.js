@@ -11,60 +11,43 @@ export async function getLoginData() {
     }
 }
 
-export async function setLoginData(enummer, password, school)
-{
-    try
-    {
+export async function setLoginData(enummer, password, school) {
+    try {
         await SecureStore.setItemAsync("enummer", enummer);
         await SecureStore.setItemAsync("password", password);
         await SecureStore.setItemAsync("school", school);
-    }
-    catch (error)
-    {
+    } catch (error) {
         console.log(error)
     }
 
 }
 
-export async function deleteLoginData()
-{
-    try
-    {
+export async function deleteLoginData() {
+    try {
         await SecureStore.deleteItemAsync("enummer");
         await SecureStore.deleteItemAsync("password");
         await SecureStore.deleteItemAsync("school");
-    }
-    catch (error)
-    {
+    } catch (error) {
         console.log(error)
     }
 }
 
-export async function setSendNotifications(value)
-{
-    try
-    {
+export async function setSendNotifications(value) {
+    try {
         await SecureStore.setItemAsync("sendNotifications", value.toString());
-    }
-    catch (error)
-    {
+    } catch (error) {
         console.log(error)
     }
 }
 
-export async function getSendNotifications()
-{
+export async function getSendNotifications() {
     let value = "true"
-    try
-    {
+    try {
         value = await SecureStore.getItemAsync("sendNotifications");
-    }
-    catch (error)
-    {
+    } catch (error) {
         console.log(error)
     }
-    if(value === undefined)
-    {
+    if (value === undefined) {
         value = true
         await setSendNotifications(true).catch(error => console.log(error))
     }

@@ -2,23 +2,53 @@ import {Image, Text, View, StyleSheet} from "react-native";
 import React from "react";
 import {TouchableRipple} from "react-native-paper";
 
-export default function Navbar({navigation, screen}){
+export default function Navbar({navigation, screen}) {
     return <View style={{justifyContent: "flex-end", alignItems: "center", paddingTop: 10, height: "13%"}}>
         <View style={styles.navbarContainer}>
-            <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} style={[styles.navbarButtons,  {width: "20%"}]} onPress={() => {navigation.navigate("Noten")}}>
-                <View style={{justifyContent: "center", alignItems: "center", width: "100%", padding: 5, borderRadius: 5, backgroundColor: screen !== "Noten" ? "white" : "rgba(66,156,245,0.44)"}}>
+            <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} style={[styles.navbarButtons, {width: "20%"}]}
+                             onPress={() => {
+                                 navigation.navigate("Noten")
+                             }}>
+                <View style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    padding: 5,
+                    borderRadius: 5,
+                    backgroundColor: screen !== "Noten" ? "white" : "rgba(66,156,245,0.44)"
+                }}>
                     <Image source={require("./assets/marks.png")} style={styles.navbarIcon}></Image>
                     <Text style={styles.navbarText}>Noten</Text>
                 </View>
             </TouchableRipple>
-            <TouchableRipple rippleColor={"rgba(255,255,255,0.9)"} style={[styles.navbarButtons,  {width: "20%"}]} onPress={() => {navigation.navigate("Kalender")}}>
-                <View style={{justifyContent: "center", alignItems: "center", width: "100%", padding: 5, borderRadius: 5, backgroundColor: screen !== "Kalender" ? "white" : "rgba(66,156,245,0.44)"}}>
+            <TouchableRipple rippleColor={"rgba(255,255,255,0.9)"} style={[styles.navbarButtons, {width: "20%"}]}
+                             onPress={() => {
+                                 navigation.navigate("Kalender")
+                             }}>
+                <View style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    padding: 5,
+                    borderRadius: 5,
+                    backgroundColor: screen !== "Kalender" ? "white" : "rgba(66,156,245,0.44)"
+                }}>
                     <Image source={require("./assets/kalender.png")} style={styles.navbarIcon}></Image>
                     <Text style={styles.navbarText}>Kalender</Text>
                 </View>
             </TouchableRipple>
-            <TouchableRipple rippleColor={"rgba(255,255,255,0.9)"} style={[styles.navbarButtons,  {width: "20%"}]} onPress={() => {navigation.navigate("Account")}}>
-                <View style={{justifyContent: "center", alignItems: "center", width: "100%", padding: 5, borderRadius: 5, backgroundColor: screen !== "Account" ? "white" : "rgba(66,156,245,0.44)"}}>
+            <TouchableRipple rippleColor={"rgba(255,255,255,0.9)"} style={[styles.navbarButtons, {width: "20%"}]}
+                             onPress={() => {
+                                 navigation.navigate("Account")
+                             }}>
+                <View style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    padding: 5,
+                    borderRadius: 5,
+                    backgroundColor: screen !== "Account" ? "white" : "rgba(66,156,245,0.44)"
+                }}>
                     <Image source={require("./assets/profile.png")} style={styles.navbarIcon}></Image>
                     <Text style={styles.navbarText}>Account</Text>
                 </View>
