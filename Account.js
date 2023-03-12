@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     Image,
-    Text, TouchableOpacity, Modal, Switch
+    Text, Modal, Switch
 } from 'react-native';
 import {StatusBar} from "expo-status-bar";
 import Navbar from "./Navbar";
@@ -14,6 +14,7 @@ import {
     registerForPushNotificationsAsync,
     removeNotificationToken
 } from "./Server";
+import {TouchableRipple} from "react-native-paper";
 
 export default function Account({navigation}){
 
@@ -69,12 +70,12 @@ export default function Account({navigation}){
                         <Text style={styles.deletePopupTitle}>Account löschen?</Text>
                         <Text style={styles.deletePopupSubtitle}>Diese Aktion ist permanent</Text>
                         <View style={styles.deletePopupButtons}>
-                            <TouchableOpacity style={styles.deletePopupCancelButton} onPress={() => setConfirmVisible(false)}>
+                            <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} style={styles.deletePopupCancelButton} onPress={() => setConfirmVisible(false)}>
                                 <Text style={styles.deletePopupButtonText}>Abbrechen</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.deletePopupDeleteButton} onPress={deleteAccountButton}>
+                            </TouchableRipple>
+                            <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} style={styles.deletePopupDeleteButton} onPress={deleteAccountButton}>
                                 <Text style={styles.deletePopupButtonText}>Löschen</Text>
-                            </TouchableOpacity>
+                            </TouchableRipple>
                         </View>
                     </View>
                 </View>
@@ -82,26 +83,26 @@ export default function Account({navigation}){
             <View style={styles.container}>
                 <Image source={require("./assets/profile.png")} style={styles.accountIcon}></Image>
                 <Text style={styles.nummerText}>{enummer}</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={logOut}>
+                <TouchableRipple  rippleColor={"rgba(255,255,255,0.5)"} style={styles.logoutButton} onPress={logOut}>
                     <Text style={styles.buttonText}>Log Out</Text>
-                </TouchableOpacity>
+                </TouchableRipple>
                 <View style={styles.deleteButtonView}>
-                    <TouchableOpacity style={styles.deleteButton} onPress={() => setConfirmVisible(true)}>
+                    <TouchableRipple rippleColor={"rgba(255,255,255,0.5)"} style={styles.deleteButton} onPress={() => setConfirmVisible(true)}>
                         <Text style={styles.buttonText}>Delete Account</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.deleteInfoButton} onPress={() => setInfoVisible(true)}>
+                    </TouchableRipple>
+                    <TouchableRipple  rippleColor={"rgba(255,255,255,0.5)"} style={styles.deleteInfoButton} onPress={() => setInfoVisible(true)}>
                         <Image style={styles.deleteInfoButtonImage} source={require("./assets/info.jpg")}></Image>
-                    </TouchableOpacity>
+                    </TouchableRipple>
                     <Modal transparent visible={infoVisible}>
                         <View style={styles.modalBackground}>
                             <View style={styles.infoPopup}>
                                 <Text style={styles.deletePopupTitle}>Info</Text>
                                 <Text style={styles.infoText}>Diese Aktion löscht nur deinen Daten vom SAL Mobile-Server, nicht deinen SAL Account.
                                     Du kannst ihn immer noch über die Website erreichen oder dich neu auf SAL Mobile anmelden</Text>
-                                <TouchableOpacity onPress={() => setInfoVisible(false)}
+                                <TouchableRipple  rippleColor={"rgba(255,255,255,0.5)"} onPress={() => setInfoVisible(false)}
                                                   style={styles.infoPopupOkButton}>
                                     <Text style={{color: "white"}}>Ok</Text>
-                                </TouchableOpacity>
+                                </TouchableRipple>
                             </View>
                         </View>
                     </Modal>
@@ -118,7 +119,7 @@ export default function Account({navigation}){
                 </View>
                 <StatusBar style={"light"} translucent={true} hidden={false}/>
             </View>
-            <Navbar navigation={navigation}></Navbar>
+            <Navbar navigation={navigation} screen={"Account"}></Navbar>
         </View>
 
     );

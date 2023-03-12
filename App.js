@@ -3,6 +3,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import Noten from "./Noten";
 import Account from "./Account"
+import Kalender from "./Kalender"
 
 const Stack = createNativeStackNavigator()
 
@@ -18,6 +19,10 @@ export default function App() {
                 <Stack.Screen
                     name={"Login"}
                     component={Login}
+                />
+                <Stack.Screen
+                    name={"Kalender"}
+                    component={Kalender}
                 />
                 <Stack.Screen
                     name={"Account"}

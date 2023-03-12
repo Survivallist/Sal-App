@@ -70,6 +70,17 @@ export async function deleteAccount()
     }).catch(error => console.log(error))
 }
 
+export async function bestatigen(fach)
+{
+    const enummer = (await getLoginData()).enummer
+    const password = (await getLoginData()).password
+    await axios.post("https://salmobile-production.up.railway.app/bestatigen",{
+        e: Base64.encode(enummer),
+        password: Base64.encode(password),
+        fach: Base64.encode(fach)
+    }).catch(error => console.log(error))
+}
+
 export async function getMarks()
 {
     let result;
@@ -93,13 +104,13 @@ export async function registerForPushNotificationsAsync(){
     }
     const {status} = await Notifications.requestPermissionsAsync();
     if(status !== "granted"){
-        alert("Please allow push notifications")
+        alert("Bitte erlaube Benachrichtigungen")
         return;
     }
     if(Platform.OS === "android")
     {
         await Notifications.setNotificationChannelAsync("default", {
-            name: "default",
+            name: "Benachrichtigungen",
             importance: Notifications.AndroidImportance.MAX
         })
     }

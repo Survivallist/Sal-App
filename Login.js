@@ -5,12 +5,12 @@ import {
     View,
     TextInput,
     ActivityIndicator,
-    TouchableOpacity,
     KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import {SelectList} from "react-native-dropdown-select-list";
 import {isKnown} from "./Server";
 import {setLoginData} from "./Files";
+import {TouchableRipple} from "react-native-paper";
 
 export default function Login({navigation}){
 
@@ -106,11 +106,13 @@ export default function Login({navigation}){
                                 setPassword(text);
                             }}/>
                     </View>
-                    <TouchableOpacity
+                    <TouchableRipple
                         onPress={onPressLogin}
-                        style={styles.loginBtn}>
+                        rippleColor={"rgba(255,255,255,0.5)"}
+                        style={styles.loginBtn}
+                    >
                         {getLoading()}
-                    </TouchableOpacity>
+                    </TouchableRipple>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
